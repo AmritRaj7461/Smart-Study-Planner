@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Study Planner</title>
+    <link rel="stylesheet" href="./src/output.css">
+</head>
+
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen transition-colors">
+<script src="../src/js/theme.js"></script>
+
+    <div class="flex">
+
+        <div id="sidebar"></div>
+
+        <main class="flex-1 p-6">
+
+            <header class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-semibold">
+                    Dashboard
+                </h1>
+                <div class="text-gray-600 dark:text-gray-400">
+                    Welcome, <span class="font-medium">Student</span>
+                </div>
+            </header>
+
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
+                    <h3 class="text-gray-500 dark:text-gray-400">Total Subjects</h3>
+                    <p id="total-subjects"
+                       class="text-3xl font-bold text-indigo-600 mt-2">0</p>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
+                    <h3 class="text-gray-500 dark:text-gray-400">Today’s Tasks</h3>
+                    <p id="today-tasks"
+                       class="text-3xl font-bold text-green-600 mt-2">0</p>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
+                    <h3 class="text-gray-500 dark:text-gray-400">Completed</h3>
+                    <p id="completed-tasks"
+                       class="text-3xl font-bold text-blue-600 mt-2">0</p>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
+                    <h3 class="text-gray-500 dark:text-gray-400">Pending</h3>
+                    <p id="pending-tasks"
+                       class="text-3xl font-bold text-red-500 mt-2">0</p>
+                </div>
+
+            </section>
+
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+                    <h2 class="text-lg font-semibold mb-4">
+                        Today’s Study Schedule
+                    </h2>
+                    <ul id="today-schedule" class="space-y-3"></ul>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+                    <h2 class="text-lg font-semibold mb-4">
+                        Upcoming Deadlines
+                    </h2>
+                    <ul id="upcoming-deadlines" class="space-y-3"></ul>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+    <script src="./src/js/loadComponents.js" defer></script>
+    <script src="./src/js/storage.js"></script>
+    <script src="./src/js/dashboard.js"></script>
+
+</body>
+</html>

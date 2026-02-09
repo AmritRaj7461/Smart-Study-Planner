@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings – Smart Study Planner</title>
+    <link rel="stylesheet" href="../src/output.css">
+</head>
+
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen transition-colors">
+
+    <script src="../src/js/theme.js"></script>
+
+
+    <div class="flex">
+
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+
+        <!-- Main Content -->
+        <main class="w-full p-6 pl-10">
+
+            <header class="mb-8">
+                <h1 class="text-2xl font-semibold">
+                    Settings
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400">
+                    Manage theme, preferences, and application data
+                </p>
+            </header>
+            <div class="grid grid-cols-2 gap-5 pl-20">
+                <!-- Theme  -->
+                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow mb-6 h-50 w-100">
+                    <h2 class="text-lg font-semibold mb-2">Theme</h2>
+                    <button onclick="toggleTheme()"
+                        class="bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700">
+                        Toggle Dark Mode
+                    </button>
+
+                </section>
+
+
+                
+
+                <!-- Export -->
+                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow mb-6 h-50 w-100">
+                    <h2 class="text-lg font-semibold mb-4">Export Data</h2>
+                    <button id="exportData" class="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700">
+                        Export All Data (JSON)
+                    </button>
+                </section>
+
+                <!-- Reset -->
+                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow h-50 w-100">
+                    <h2 class="text-lg font-semibold mb-4 text-red-500">
+                        Reset Application Data
+                    </h2>
+                    <button id="resetData" class="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700">
+                        Reset All Data
+                    </button>
+                </section>
+            </div>
+    </main>
+    </div>
+
+    <script src="../src/js/loadComponents.js" defer></script>
+    <script src="../src/js/settings.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subjects – Smart Study Planner</title>
+  <link rel="stylesheet" href="../src/output.css">
+</head>
+
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
+
+  <!-- Apply theme -->
+  <script src="../src/js/theme.js"></script>
+
+  <div class="flex">
+
+    <!-- Sidebar -->
+    <div id="sidebar"></div>
+
+    <!-- Main -->
+    <main class="flex-1 p-6">
+
+      <!-- Header -->
+      <header class="mb-8">
+        <h1 class="text-2xl font-semibold">Subject Management</h1>
+        <p class="text-gray-600 dark:text-gray-400">
+          Add and manage your subjects with priorities
+        </p>
+      </header>
+
+      <!-- Add Subject -->
+      <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow mb-8">
+        <h2 class="text-lg font-semibold mb-4">Add Subject</h2>
+
+        <form class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input type="text" placeholder="Subject Name"
+            class="border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+
+          <select class="border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="">Priority</option>
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+
+          <button type="submit"
+            class="bg-indigo-600 text-white rounded-xl px-4 py-2 hover:bg-indigo-700 transition">
+            Add Subject
+          </button>
+        </form>
+      </section>
+
+      <!-- Subject List -->
+      <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+        <h2 class="text-lg font-semibold mb-4">Your Subjects</h2>
+
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse">
+            <thead>
+              <tr class="bg-gray-100 dark:bg-gray-700 text-left text-gray-700 dark:text-gray-200">
+                <th class="p-3">Subject</th>
+                <th class="p-3">Priority</th>
+                <th class="p-3">Action</th>
+              </tr>
+            </thead>
+            <tbody id="subject-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../src/js/loadComponents.js" defer></script>
+  <script src="../src/js/storage.js"></script>
+  <script src="../src/js/subjects.js"></script>
+
+</body>
+</html>

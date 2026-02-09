@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analytics – Smart Study Planner</title>
+    <link rel="stylesheet" href="../src/output.css">
+</head>
+
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
+
+    <script src="../src/js/theme.js"></script>
+
+    <div class="flex">
+
+        <div id="sidebar"></div>
+
+        <main class="flex-1 p-6">
+
+            <header class="mb-10">
+                <h1 class="text-2xl font-semibold">Progress Analytics</h1>
+                <p class="text-gray-600 dark:text-gray-400">
+                    Visual summary of your task completion
+                </p>
+            </header>
+
+            <div class="space-y-10">
+
+                <section class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Total Tasks</p>
+                        <p id="total-tasks" class="text-3xl font-bold text-indigo-600 mt-2">0</p>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Completed</p>
+                        <p id="completed-tasks" class="text-3xl font-bold text-green-600 mt-2">0</p>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Pending</p>
+                        <p id="pending-tasks" class="text-3xl font-bold text-red-500 mt-2">0</p>
+                    </div>
+
+                </section>
+
+                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow mb-12">
+                    <h2 class="text-lg font-semibold mb-5">Overall Completion</h2>
+
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-xl-full h-4 mb-4">
+                        <div id="progress-bar" class="bg-indigo-600 h-4 rounded-xl-full transition-all duration-300"
+                            style="width: 0%">
+                        </div>
+                    </div>
+
+                    <p id="progress-text" class="text-sm text-gray-600 dark:text-gray-400">
+                        0% of tasks completed
+                    </p>
+                </section>
+
+                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+                    <h2 class="text-lg font-semibold mb-4">Insights</h2>
+                    <ul id="insights" class="space-y-3 text-gray-700 dark:text-gray-300"></ul>
+                </section>
+
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="../src/js/loadComponents.js" defer></script>
+    <script src="../src/js/storage.js"></script>
+    <script src="../src/js/analytics.js"></script>
+
+</body>
+
+</html>
