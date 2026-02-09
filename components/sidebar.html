@@ -1,26 +1,158 @@
-<aside class="w-64 min-h-screen bg-indigo-600 text-white hidden md:block">
-  <div class="p-6 text-2xl font-bold border-b border-indigo-500">
-    Study Planner
+<style>
+  :root {
+    --sidebar-width: 256px;
+    --sidebar-collapsed-width: 80px;
+  }
+
+  body.sidebar-collapsed {
+    --sidebar-width: var(--sidebar-collapsed-width);
+  }
+
+  aside.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    flex-shrink: 0;
+    transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    
+    /* CRITICAL FIX #1: Allow tooltips to spill outside the sidebar */
+    overflow: visible !important; 
+    z-index: 50; /* Ensure it sits above the main content */
+  }
+
+  .nav-item {
+    position: relative; /* Anchor for the tooltip */
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 18px;
+    margin: 4px 8px; /* Add margin so hover box looks nice */
+    border-radius: 12px;
+    color: #e5e7eb;
+    text-decoration: none;
+    white-space: nowrap; /* Keep icon and text on same line */
+  }
+
+  .nav-item:hover {
+    background: rgba(99, 102, 241, 0.35);
+  }
+
+  .nav-item.active {
+    background: rgba(99, 102, 241, 0.6);
+  }
+
+  /* CRITICAL FIX #2: Hide text manually since we removed overflow:hidden */
+  body.sidebar-collapsed .label,
+  body.sidebar-collapsed .sidebar-title {
+    display: none; 
+  }
+  
+  /* Center icons when collapsed */
+  body.sidebar-collapsed .nav-item {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* --- TOOLTIP STYLES --- */
+  .tooltip {
+    position: absolute;
+    left: 100%; /* Push it completely to the right */
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 12px; /* Gap between icon and tooltip */
+    
+    background-color: #111827; /* Dark background */
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 9999; /* Super high to sit on top of everything */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+    
+    /* Hidden by default */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.2s ease;
+  }
+
+  /* Little arrow pointing to the icon */
+  .tooltip::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 4px;
+    border-style: solid;
+    border-color: transparent #111827 transparent transparent;
+  }
+
+  /* SHOW TOOLTIP: Only when Sidebar is Collapsed AND Hovered */
+  body.sidebar-collapsed .nav-item:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(5px);
+  }
+</style>
+
+<aside class="sidebar bg-slate-900/90 backdrop-blur-xl border-r border-white/10 text-white">
+
+  <!-- HEADER -->
+  <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
+    <span class="sidebar-title text-xl font-bold">Study Planner</span>
+    <button id="toggleSidebar"
+      class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-all duration-200 focus:outline-none">
+      <svg id="toggleIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+        <line x1="9" x2="9" y1="3" y2="21" />
+      </svg>
+    </button>
   </div>
 
-  <nav class="p-4 space-y-4">
-    <a href="../index.html" class="block px-4 py-2 rounded-xl bg-indigo-700">
-      Dashboard
+  <!-- NAV -->
+  <nav class="mt-4 flex flex-col gap-1 px-2">
+
+    <a href="../index.html" class="nav-item">
+      <span class="icon">🏠</span>
+      <span class="label">Dashboard</span>
+      <span class="tooltip">Dashboard</span>
     </a>
-    <a href="../pages/subjects.html" class="block px-4 py-2 rounded-xl hover:bg-indigo-700">
-      Subjects
+
+    <a href="../pages/subjects.html" class="nav-item">
+      <span class="icon">📚</span>
+      <span class="label">Subjects</span>
+      <span class="tooltip">Subjects</span>
     </a>
-    <a href="../pages/schedule.html" class="block px-4 py-2 rounded-xl hover:bg-indigo-700">
-      Schedule
+
+    <a href="../pages/schedule.html" class="nav-item">
+      <span class="icon">🗓️</span>
+      <span class="label">Schedule</span>
+      <span class="tooltip">Schedule</span>
     </a>
-    <a href="../pages/tasks.html" class="block px-4 py-2 rounded-xl hover:bg-indigo-700">
-      Tasks
+
+    <a href="../pages/tasks.html" class="nav-item">
+      <span class="icon">✅</span>
+      <span class="label">Tasks</span>
+      <span class="tooltip">Tasks</span>
     </a>
-    <a href="../pages/analytics.html" class="block px-4 py-2 rounded-xl hover:bg-indigo-700">
-      Analytics
+
+    <a href="../pages/analytics.html" class="nav-item">
+      <span class="icon">📊</span>
+      <span class="label">Analytics</span>
+      <span class="tooltip">Analytics</span>
     </a>
-    <a href="../pages/settings.html" class="block px-4 py-2 rounded-xl hover:bg-indigo-700">
-      Settings
+
+    <a href="../pages/settings.html" class="nav-item">
+      <span class="icon">⚙️</span>
+      <span class="label">Settings</span>
+      <span class="tooltip">Settings</span>
     </a>
+
   </nav>
 </aside>

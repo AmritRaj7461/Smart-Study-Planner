@@ -1,42 +1,21 @@
-// Preferences
-const notificationCheckbox = document.getElementById("notifications");
+// ---------- STORAGE COUNTS ----------
+document.getElementById("subject-count").innerText =
+  getData("subjects").length;
 
-if (localStorage.getItem("notifications") === "true") {
-  notificationCheckbox.checked = true;
-}
+document.getElementById("task-count").innerText =
+  getData("tasks").length;
 
-notificationCheckbox.addEventListener("change", () => {
-  localStorage.setItem("notifications", notificationCheckbox.checked);
-});
+document.getElementById("schedule-count").innerText =
+  getData("schedule").length;
 
-// Export Data
-document.getElementById("exportData").addEventListener("click", () => {
-  const data = {
-    subjects: JSON.parse(localStorage.getItem("subjects")) || [],
-    tasks: JSON.parse(localStorage.getItem("tasks")) || [],
-    schedule: JSON.parse(localStorage.getItem("schedule")) || [],
-    preferences: {
-      theme: localStorage.getItem("theme") || "light",
-      notifications: localStorage.getItem("notifications") || "false",
-    },
-  };
-
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: "application/json",
-  });
-
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "smart-study-planner-data.json";
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-// Reset Data
+// ---------- RESET DATA ----------
 document.getElementById("resetData").addEventListener("click", () => {
-  if (confirm("Are you sure you want to reset all data?")) {
-    localStorage.clear();
-    location.reload();
-  }
+  const confirmReset = confirm(
+    "This will permanently delete all your data.\n\nDo you want to continue?"
+  );
+
+  if (!confirmReset) return;
+
+  localStorage.clear();
+  location.reload();
 });

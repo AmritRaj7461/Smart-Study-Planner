@@ -9,65 +9,99 @@
 </head>
 
 <body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen transition-colors">
-<script src="../src/js/theme.js"></script>
 
-    <div class="flex">
+    <script src="./src/js/theme.js"></script>
+
+    <div class="flex h-screen overflow-hidden">
+
 
         <div id="sidebar"></div>
 
-        <main class="flex-1 p-6">
+        <main id="main-content" class="transition-all duration-300 flex-1 p-6 space-y-10 overflow-y-auto">
 
-            <header class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-semibold">
-                    Dashboard
-                </h1>
-                <div class="text-gray-600 dark:text-gray-400">
-                    Welcome, <span class="font-medium">Student</span>
+            <!-- HEADER -->
+            <header class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-semibold">Dashboard</h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Your daily academic overview
+                    </p>
                 </div>
+                <span class="text-sm text-gray-600 dark:text-gray-400">
+                    👋 Welcome, <b>Student</b>
+                </span>
             </header>
 
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- STATS -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
                 <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-                    <h3 class="text-gray-500 dark:text-gray-400">Total Subjects</h3>
-                    <p id="total-subjects"
-                       class="text-3xl font-bold text-indigo-600 mt-2">0</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">📚 Total Subjects</p>
+                    <p id="total-subjects" class="text-3xl font-bold text-indigo-600 mt-2">0</p>
                 </div>
 
                 <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-                    <h3 class="text-gray-500 dark:text-gray-400">Today’s Tasks</h3>
-                    <p id="today-tasks"
-                       class="text-3xl font-bold text-green-600 mt-2">0</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">📝 Today’s Tasks</p>
+                    <p id="today-tasks" class="text-3xl font-bold text-green-600 mt-2">0</p>
                 </div>
 
                 <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-                    <h3 class="text-gray-500 dark:text-gray-400">Completed</h3>
-                    <p id="completed-tasks"
-                       class="text-3xl font-bold text-blue-600 mt-2">0</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">✅ Completed</p>
+                    <p id="completed-tasks" class="text-3xl font-bold text-blue-600 mt-2">0</p>
                 </div>
 
                 <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-                    <h3 class="text-gray-500 dark:text-gray-400">Pending</h3>
-                    <p id="pending-tasks"
-                       class="text-3xl font-bold text-red-500 mt-2">0</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">⏳ Pending</p>
+                    <p id="pending-tasks" class="text-3xl font-bold text-red-500 mt-2">0</p>
                 </div>
 
             </section>
 
+            <!-- MAIN CONTENT -->
             <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-                    <h2 class="text-lg font-semibold mb-4">
-                        Today’s Study Schedule
-                    </h2>
-                    <ul id="today-schedule" class="space-y-3"></ul>
+                    <h2 class="text-lg font-semibold mb-4">📆 Today’s Study Schedule</h2>
+                    <ul id="today-schedule" class="space-y-3 text-sm"></ul>
                 </div>
 
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-                    <h2 class="text-lg font-semibold mb-4">
-                        Upcoming Deadlines
-                    </h2>
-                    <ul id="upcoming-deadlines" class="space-y-3"></ul>
+                    <h2 class="text-lg font-semibold mb-4">⏰ Upcoming Deadlines</h2>
+                    <ul id="upcoming-deadlines" class="space-y-3 text-sm"></ul>
+                </div>
+
+            </section>
+
+            <!-- ALERTS -->
+            <!-- ALERTS + WEEKLY PROGRESS -->
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- URGENT ALERTS -->
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
+                    <h2 class="text-sm font-semibold mb-2">🚨 Urgent Alerts</h2>
+                    <p class="text-xs text-gray-400 mb-3">
+                        Tasks that need immediate attention
+                    </p>
+                    <div id="dashboard-alerts" class="space-y-3"></div>
+                </div>
+
+                <!-- WEEKLY PROGRESS -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+                    <h2 class="text-lg font-semibold mb-2">📊 Weekly Progress</h2>
+                    <p class="text-sm text-gray-400 mb-4">
+                        Your productivity this week
+                    </p>
+
+                    <div class="mb-2 flex justify-between text-sm">
+                        <span>Completed</span>
+                        <span id="weekly-progress-text">0 / 0 tasks</span>
+                    </div>
+
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="weekly-progress-bar" class="bg-indigo-500 h-2 rounded-full transition-all"
+                            style="width: 0%">
+                        </div>
+                    </div>
                 </div>
 
             </section>
@@ -75,9 +109,13 @@
         </main>
     </div>
 
-    <script src="./src/js/loadComponents.js" defer></script>
+    <!-- Scripts -->
+    <script src="../src/js/loadComponents.js" defer></script>
+    <script src="../src/js/sidebar.js"></script>
     <script src="./src/js/storage.js"></script>
+    <script src="./src/js/alerts.js"></script>
     <script src="./src/js/dashboard.js"></script>
 
 </body>
+
 </html>

@@ -8,63 +8,98 @@
     <link rel="stylesheet" href="../src/output.css">
 </head>
 
-<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen transition-colors">
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
 
     <script src="../src/js/theme.js"></script>
 
-
-    <div class="flex">
+    <div class="flex h-screen overflow-hidden">
 
         <!-- Sidebar -->
         <div id="sidebar"></div>
 
-        <!-- Main Content -->
-        <main class="w-full p-6 pl-10">
+        <!-- Main -->
+        <main id="main-content" class="flex-1 p-6 overflow-y-auto transition-all duration-300">
 
-            <header class="mb-8">
-                <h1 class="text-2xl font-semibold">
-                    Settings
-                </h1>
+            <!-- Header -->
+            <header class="mb-10">
+                <h1 class="text-2xl font-semibold">Settings</h1>
                 <p class="text-gray-600 dark:text-gray-400">
-                    Manage theme, preferences, and application data
+                    Customize appearance and manage application data
                 </p>
             </header>
-            <div class="grid grid-cols-2 gap-5 pl-20">
-                <!-- Theme  -->
-                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow mb-6 h-50 w-100">
-                    <h2 class="text-lg font-semibold mb-2">Theme</h2>
+
+            <!-- SETTINGS GRID -->
+            <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+                <!-- Theme Control -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow space-y-3">
+                    <h2 class="text-lg font-semibold">🎨 Theme</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Switch between light and dark mode manually.
+                    </p>
                     <button onclick="toggleTheme()"
-                        class="bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700">
-                        Toggle Dark Mode
+                        class="bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition">
+                        Toggle Theme
                     </button>
+                </div>
 
-                </section>
+                <!-- App Info -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow space-y-3">
+                    <h2 class="text-lg font-semibold">ℹ Application Info</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Smart Study Planner
+                    </p>
+                    <ul class="text-sm space-y-1 text-gray-600 dark:text-gray-300">
+                        <li>Version: <b>1.0.0</b></li>
+                        <li>Built with: HTML, Tailwind CSS, JavaScript</li>
+                        <li>Storage: Browser LocalStorage</li>
+                    </ul>
+                </div>
 
+                <!-- Storage Usage -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow space-y-3">
+                    <h2 class="text-lg font-semibold">💾 Storage Summary</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Overview of stored data in your browser.
+                    </p>
+                    <ul class="text-sm space-y-1">
+                        <li>Subjects: <span id="subject-count">0</span></li>
+                        <li>Tasks: <span id="task-count">0</span></li>
+                        <li>Schedule Entries: <span id="schedule-count">0</span></li>
+                    </ul>
+                </div>
 
-                
+                <!-- Usage Tips -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow space-y-3">
+                    <h2 class="text-lg font-semibold">💡 Usage Tips</h2>
+                    <ul class="text-sm space-y-2 text-gray-600 dark:text-gray-300">
+                        <li>✔ Add priorities to subjects for better planning</li>
+                        <li>✔ Complete tasks to improve analytics insights</li>
+                        <li>✔ Review dashboard daily for urgent alerts</li>
+                    </ul>
+                </div>
 
-                <!-- Export -->
-                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow mb-6 h-50 w-100">
-                    <h2 class="text-lg font-semibold mb-4">Export Data</h2>
-                    <button id="exportData" class="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700">
-                        Export All Data (JSON)
-                    </button>
-                </section>
-
-                <!-- Reset -->
-                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow h-50 w-100">
-                    <h2 class="text-lg font-semibold mb-4 text-red-500">
-                        Reset Application Data
-                    </h2>
-                    <button id="resetData" class="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700">
+                <!-- Danger Zone -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow space-y-4 md:col-span-2 xl:col-span-1">
+                    <h2 class="text-lg font-semibold text-red-500">⚠ Danger Zone</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        This action will permanently delete all stored data.
+                    </p>
+                    <button id="resetData"
+                        class="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition">
                         Reset All Data
                     </button>
-                </section>
-            </div>
-    </main>
+                </div>
+
+            </section>
+
+        </main>
     </div>
 
+    <!-- Scripts -->
     <script src="../src/js/loadComponents.js" defer></script>
+    <script src="../src/js/sidebar.js"></script>
+    <script src="../src/js/storage.js"></script>
     <script src="../src/js/settings.js"></script>
 
 </body>
