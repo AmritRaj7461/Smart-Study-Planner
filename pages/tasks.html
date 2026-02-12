@@ -4,92 +4,196 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tasks – Smart Study Planner</title>
+  <title>Nexus | Task Manager</title>
   <link rel="stylesheet" href="../src/output.css">
+  <style>
+    :root {
+      --accent: #6366f1;
+    }
+
+    @keyframes reveal {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+        filter: blur(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    .reveal {
+      animation: reveal 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      opacity: 0;
+    }
+
+    body {
+      transition: background-color 0.3s ease;
+    }
+
+    /* Glass Morphism responsive cards */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .dark .glass-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Prevent horizontal scroll on mobile */
+    main {
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* Modern Button Styles */
+    .btn-complete {
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    .btn-complete:hover {
+      background: #22c55e;
+      color: white;
+    }
+
+    .btn-delete {
+      background: rgba(239, 44, 44, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 44, 44, 0.2);
+    }
+
+    .btn-delete:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    /* Archive Style for Completed Tasks */
+    .archive-card {
+      border-left: 4px solid #6366f1;
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    /* --- Ultra-Hide Scrollbar for Chrome/Safari/Firefox --- */
+    html,
+    body {
+      scrollbar-width: none;
+      /* Firefox */
+      -ms-overflow-style: none;
+      /* IE/Edge */
+    }
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar,
+    main::-webkit-scrollbar,
+    div::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+
+    /* Specific utility for the main container */
+    .hide-scrollbar {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      /* Smooth scrolling on mobile */
+    }
+
+    #main-content {
+      margin-left: var(--sidebar-width);
+    }
+  </style>
 </head>
 
-<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
-
-  <!-- Apply theme -->
+<body
+  class="bg-gray-50 text-slate-900 dark:bg-[#020617] dark:text-slate-200 min-h-screen flex h-screen overflow-hidden">
   <script src="../src/js/theme.js"></script>
 
-  <div class="flex h-screen overflow-hidden">
+  <div id="sidebar"></div>
 
-    <!-- Sidebar -->
-    <div id="sidebar"></div>
+  <main id="main-content"
+    class="flex-1 ml-[280px] body.sidebar-collapsed:ml-[88px] px-4 md:px-10 pt-4 pb-10 space-y-6 overflow-y-auto transition-all duration-300">
 
-    <!-- Main -->
-    <main id="main-content" class="flex-1 p-6 overflow-y-auto transition-all duration-300">
+    <header class="mb-8 reveal" style="animation-delay: 0.1s">
+      <h1 class="text-4xl md:text-4xl font-black tracking-tight uppercase italic leading-tight">Task Manager</h1>
+      <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Prioritize assignments and hit your deadlines.
+      </p>
+    </header>
 
-      <!-- Header -->
-      <header class="mb-8">
-        <h1 class="text-2xl font-semibold">Task Manager</h1>
-        <p class="text-gray-600 dark:text-gray-400">
-          Manage assignments, exams, and project deadlines
-        </p>
-      </header>
+    <section class="glass-card p-5 md:p-8 rounded-3xl mb-8 reveal" style="animation-delay: 0.2s">
+      <h2 class="text-lg font-bold mb-4 flex items-center gap-2 italic">
+        <span class="w-1.5 h-5 bg-indigo-500 rounded-full"></span> Quick Add
+      </h2>
 
-      <!-- Add Task -->
-      <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow mb-8">
-        <h2 class="text-lg font-semibold mb-4">Add New Task</h2>
-
-        <form class="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <input type="text" placeholder="Task Title"
-            class="border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-
-          <select id="task-subject"
-            class="border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-800">
-            <option value="">Select Subject</option>
-          </select>
-
-
-          <select
-            class="border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500  bg-white dark:bg-gray-800">
-            <option value="">Task Type</option>
-            <option>Assignment</option>
-            <option>Exam</option>
-            <option>Project</option>
-          </select>
-
-          <input type="date"
-            class="border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-
-          <button type="submit" class="bg-indigo-600 text-white rounded-xl px-4 py-2 hover:bg-indigo-700 transition">
-            Add Task
-          </button>
-        </form>
-      </section>
-
-      <!-- Task List -->
-      <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-        <h2 class="text-lg font-semibold mb-4">Your Tasks</h2>
-
-        <div class="overflow-x-auto">
-          <table class="w-full border-collapse">
-            <thead>
-              <tr class="bg-gray-100 dark:bg-gray-700 text-left text-gray-700 dark:text-gray-200">
-                <th class="p-3">Task</th>
-                <th class="p-3">Subject</th>
-                <th class="p-3">Type</th>
-                <th class="p-3">Deadline</th>
-                <th class="p-3">Status</th>
-                <th class="p-3">Action</th>
-              </tr>
-            </thead>
-            <tbody id="task-table"></tbody>
-          </table>
+      <form class="flex flex-col gap-4 lg:flex-row lg:items-end lg:gap-4">
+        <div class="flex-1 space-y-1">
+          <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Title</label>
+          <input type="text" placeholder="Task name..."
+            class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
         </div>
+
+        <div class="grid grid-cols-2 gap-3 lg:flex lg:gap-4">
+          <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Subject</label>
+            <select id="task-subject"
+              class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm outline-none cursor-pointer"></select>
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Type</label>
+            <select
+              class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm outline-none">
+              <option>Assignment</option>
+              <option>Exam</option>
+              <option>Project</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="flex-1 space-y-1">
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Deadline</label>
+            <input type="date"
+              class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm outline-none" />
+          </div>
+          <button type="submit"
+            class="w-full lg:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl px-8 py-2.5 text-sm uppercase transition-all active:scale-95 shadow-lg shadow-indigo-500/20">
+            Add
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <div class="space-y-10">
+      <section>
+        <div class="flex justify-between items-center mb-4 px-1">
+          <h2 class="text-xl font-black italic tracking-tight uppercase">In Progress</h2>
+          <span id="task-count"
+            class="px-3 py-0.5 bg-indigo-500 text-white rounded-full text-[10px] font-black">0</span>
+        </div>
+        <div id="task-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
       </section>
 
-    </main>
-  </div>
+      <section class="pb-10">
+        <h2 class="text-xl font-black italic tracking-tight uppercase mb-4 px-1 text-slate-400 dark:text-slate-500">
+          COMPLETED</h2>
+        <div id="completed-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+      </section>
+    </div>
 
-  <!-- Scripts -->
+  </main>
+
   <script src="../src/js/loadComponents.js" defer></script>
   <script src="../src/js/sidebar.js"></script>
   <script src="../src/js/storage.js"></script>
   <script src="../src/js/tasks.js"></script>
-
 </body>
 
 </html>

@@ -1,188 +1,191 @@
 <style>
   :root {
-    --sidebar-width: 256px;
-    --sidebar-collapsed-width: 80px;
+    --sidebar-width: 280px;
+    --sidebar-collapsed-width: 88px;
+    --accent-glow: rgba(99, 102, 241, 0.4);
   }
 
   body.sidebar-collapsed {
     --sidebar-width: var(--sidebar-collapsed-width);
   }
 
+  /* --- FIXED POSITIONING FIX --- */
   aside.sidebar {
+    position: fixed;
+    /* DETACHES FROM FLOW TO OVERRIDE CARDS */
+    left: 0;
+    top: 0;
     width: var(--sidebar-width);
     height: 100vh;
     flex-shrink: 0;
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
-    /* Allows tooltips to be visible outside the sidebar */
-    overflow: visible !important; 
-    z-index: 50; 
+    overflow: visible !important;
+    /* ALLOWS TOOLTIPS TO POP OUT */
+    z-index: 99999 !important;
+    /* HIGHER THAN ALL GLASS CARDS */
   }
 
-  /* --- NAV ITEM --- */
-  .nav-item {
-    position: relative;
+  .sidebar-header {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 12px 18px;
-    margin: 4px 8px;
-    border-radius: 12px;
-    
-    /* ADAPTIVE TEXT COLOR */
-    color: #4b5563; /* Gray-600 (Light Mode Default) */
-    text-decoration: none;
-    white-space: nowrap;
-    transition: all 0.2s;
-  }
-
-  /* Dark Mode Text Override */
-  .dark .nav-item {
-    color: #e5e7eb; /* Gray-200 (Dark Mode) */
-  }
-
-  /* Hover States */
-  .nav-item:hover {
-    background: rgba(99, 102, 241, 0.1); /* Light Indigo tint */
-    color: #4f46e5; /* Indigo-600 */
-  }
-  
-  .dark .nav-item:hover {
-    background: rgba(99, 102, 241, 0.35);
-    color: white;
-  }
-
-  .nav-item.active {
-    background: #4f46e5;
-    color: white;
-  }
-  /* Active state stays same in both modes usually, or you can tweak */
-  .dark .nav-item.active {
-    background: rgba(99, 102, 241, 0.6);
-  }
-
-  .icon {
-    font-size: 1.25rem;
-    min-width: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* --- COLLAPSED STATE LOGIC --- */
-  body.sidebar-collapsed .label,
-  body.sidebar-collapsed .sidebar-title {
-    display: none; 
+    justify-content: space-between;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   }
 
   body.sidebar-collapsed .sidebar-header {
     justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
-  }
-  
-  body.sidebar-collapsed .nav-item {
-    justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
+    padding: 1.5rem 0;
   }
 
-  /* --- TOOLTIP (Floating Info) --- */
+  .sidebar-title {
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+  }
+
+  body.sidebar-collapsed .sidebar-title {
+    display: none;
+  }
+
+  /* --- NAV ITEMS --- */
+  .nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 22px;
+    margin: 6px 12px;
+    border-radius: 18px;
+    font-weight: 800;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #64748b;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* PREVENTS CLIPPING */
+    overflow: visible !important;
+  }
+
+  .dark .nav-item {
+    color: #94a3b8;
+  }
+
+  body.sidebar-collapsed .nav-item {
+    justify-content: center;
+    padding: 14px 0;
+    margin: 6px 15px;
+  }
+
+  .nav-item:hover {
+    background: rgba(99, 102, 241, 0.08);
+    color: #4f46e5;
+    transform: translateX(4px);
+  }
+
+  .nav-item.active {
+    background: #4f46e5 !important;
+    color: white !important;
+    box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+  }
+
+  /* --- TOOLTIP MASTER LAYER --- */
   .tooltip {
     position: absolute;
     left: 100%;
     top: 50%;
     transform: translateY(-50%);
-    margin-left: 12px;
-    
-    background-color: #1f2937; /* Always dark for contrast */
+    margin-left: 16px;
+    background: #0f172a;
     color: white;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
     white-space: nowrap;
-    z-index: 9999;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    
     opacity: 0;
     visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* THE HIGHEST LAYER IN THE SYSTEM */
+    z-index: 100000 !important;
     pointer-events: none;
-    transition: all 0.2s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   }
 
-  /* Tooltip Arrow */
-  .tooltip::before {
-    content: '';
-    position: absolute;
-    left: -4px;
-    top: 50%;
-    transform: translateY(-50%);
-    border-width: 4px;
-    border-style: solid;
-    border-color: transparent #1f2937 transparent transparent;
+  .icon {
+    font-size: 1.5rem;
+    /* Increased from 1.3rem */
+    min-width: 32px;
+    /* Increased from 28px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.05));
   }
 
-  /* Show Tooltip Rule */
+  .nav-item:hover .icon {
+    transform: scale(1.2) translateY(-2px);
+    /* Slightly more aggressive scaling */
+    filter: drop-shadow(0 0 10px var(--accent-glow));
+  }
+
+  body.sidebar-collapsed .nav-item {
+    justify-content: center;
+    padding: 14px 0;
+    margin: 6px 12px;
+  }
+
   body.sidebar-collapsed .nav-item:hover .tooltip {
     opacity: 1;
     visibility: visible;
-    transform: translateY(-50%) translateX(5px);
+    transform: translateY(-50%) translateX(10px);
+  }
+
+  body.sidebar-collapsed .label {
+    display: none;
   }
 </style>
 
-<aside id="sidebar-el" class="sidebar bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-colors duration-300">
-
-  <div class="sidebar-header flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800">
-    <span class="sidebar-title text-xl font-bold text-gray-800 dark:text-white">Study Planner</span>
-    
-    <button id="toggleSidebar" 
-      class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white transition-all duration-200 focus:outline-none">
-      <svg id="toggleIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-        <line x1="9" x2="9" y1="3" y2="21"/>
+<aside id="sidebar-el"
+  class="sidebar bg-white/80 dark:bg-slate-900/90 backdrop-blur-xl border-r border-slate-200 dark:border-slate-800">
+  <div class="sidebar-header">
+    <span class="sidebar-title text-xl text-slate-900 dark:text-white">Nexus</span>
+    <button id="toggleSidebar"
+      class="p-2 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 transition-all focus:outline-none">
+      <svg id="toggleIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
       </svg>
     </button>
   </div>
 
-  <nav class="mt-4 flex flex-col gap-1 px-2">
-
+  <nav class="mt-6 flex flex-col gap-2 px-3">
     <a href="../index.html" class="nav-item">
-      <span class="icon">🏠</span>
-      <span class="label">Dashboard</span>
-      <span class="tooltip">Dashboard</span>
+      <span class="icon">🏛️</span><span class="label">DASHBOARD</span><span class="tooltip">dASHBOARD</span>
     </a>
-
     <a href="../pages/subjects.html" class="nav-item">
-      <span class="icon">📚</span>
-      <span class="label">Subjects</span>
-      <span class="tooltip">Subjects</span>
+      <span class="icon">📖</span><span class="label">SUBJECTS</span><span class="tooltip">SUBJECTS</span>
     </a>
-
     <a href="../pages/schedule.html" class="nav-item">
-      <span class="icon">🗓️</span>
-      <span class="label">Schedule</span>
-      <span class="tooltip">Schedule</span>
+      <span class="icon">📅</span><span class="label">SCHEDULE</span><span class="tooltip">SCHEDULE</span>
     </a>
-
     <a href="../pages/tasks.html" class="nav-item">
-      <span class="icon">✅</span>
-      <span class="label">Tasks</span>
-      <span class="tooltip">Tasks</span>
+      <span class="icon">📝</span><span class="label">TASK</span><span class="tooltip">TASK</span>
     </a>
-
     <a href="../pages/analytics.html" class="nav-item">
-      <span class="icon">📊</span>
-      <span class="label">Analytics</span>
-      <span class="tooltip">Analytics</span>
+      <span class="icon">📈</span><span class="label">ANALYTICS</span><span class="tooltip">ANALYTICS</span>
     </a>
-
     <a href="../pages/settings.html" class="nav-item">
-      <span class="icon">⚙️</span>
-      <span class="label">Settings</span>
-      <span class="tooltip">Settings</span>
+      <span class="icon">⚙️</span><span class="label">SETTINGS</span><span class="tooltip">SETTINGS</span>
     </a>
-
   </nav>
 </aside>

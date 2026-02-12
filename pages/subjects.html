@@ -4,83 +4,143 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Subjects – Smart Study Planner</title>
+  <title>Nexus | Subject Management</title>
   <link rel="stylesheet" href="../src/output.css">
+  <style>
+    :root {
+      --accent: #6366f1;
+    }
+
+    @keyframes reveal {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+        filter: blur(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    .reveal {
+      animation: reveal 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      opacity: 0;
+    }
+
+    /* Glassmorphism that adapts to theme */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    }
+
+    .dark .glass-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    /* Heading Contrast */
+    .heading-intel {
+      color: #0f172a;
+    }
+
+    .dark .heading-intel {
+      color: #ffffff;
+    }
+
+    /* Scrollbar Hygiene */
+    html,
+    body {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none !important;
+    }
+
+    .subject-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.3);
+    }
+
+    #main-content {
+      margin-left: var(--sidebar-width);
+    }
+  </style>
 </head>
 
-<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
-
-  <!-- Apply theme -->
+<body
+  class="bg-gray-50 text-slate-900 dark:bg-[#020617] dark:text-slate-200 min-h-screen flex h-screen overflow-hidden transition-colors duration-300">
   <script src="../src/js/theme.js"></script>
 
-  <div class="flex h-screen overflow-hidden">
+  <div id="sidebar"></div>
 
+  <main id="main-content"
+    class="flex-1 ml-[280px] body.sidebar-collapsed:ml-[88px] px-4 md:px-10 pt-4 pb-10 space-y-6 overflow-y-auto transition-all duration-300">
 
-    <!-- Sidebar -->
-    <div id="sidebar"></div>
+    <header class="mb-10 reveal" style="animation-delay: 0.1s">
+      <h1 class="text-4xl md:text-5xl font-black tracking-tighter uppercase italic heading-intel">Curriculum</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-3 text-sm font-bold uppercase tracking-widest">Define your
+        academic modules and priority nodes.</p>
+    </header>
 
-    <!-- Main -->
-    <main id="main-content" class="flex-1 p-6 overflow-y-auto transition-all duration-300">
+    <section class="glass-card p-6 md:p-8 rounded-[2.5rem] mb-10 reveal" style="animation-delay: 0.2s">
+      <h2 id="form-title" class="text-lg font-black mb-6 flex items-center gap-3 uppercase italic">
+        <span class="w-1.5 h-6 bg-indigo-500 rounded-full"></span> Register Module
+      </h2>
 
-      <!-- Header -->
-      <header class="mb-8">
-        <h1 class="text-2xl font-semibold">Subject Management</h1>
-        <p class="text-gray-600 dark:text-gray-400">
-          Add and manage your subjects with priorities
-        </p>
-      </header>
-
-      <!-- Add Subject -->
-      <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow mb-8">
-        <h2 id="form-title" class="text-lg font-semibold mb-4">
-          Add Subject
-        </h2>
-
-        <form class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input type="text" placeholder="Subject Name"
-            class="border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-
-          <select
-            class="border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-800">
-            <option value="">Priority</option>
-            <option>High</option>
-            <option>Medium</option>
-            <option>Low</option>
-          </select>
-
-          <button type="submit" class="bg-indigo-600 text-white rounded-xl px-4 py-2 hover:bg-indigo-700 transition">
-            Add Subject
-          </button>
-        </form>
-      </section>
-
-      <!-- Subject List -->
-      <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-        <h2 class="text-lg font-semibold mb-4">Your Subjects</h2>
-
-        <div class="overflow-x-auto">
-          <table class="w-full border-collapse">
-            <thead>
-              <tr class="bg-gray-100 dark:bg-gray-700 text-left text-gray-700 dark:text-gray-200">
-                <th class="p-3">Subject</th>
-                <th class="p-3">Priority</th>
-                <th class="p-3">Action</th>
-              </tr>
-            </thead>
-            <tbody id="subject-table"></tbody>
-          </table>
+      <form class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+        <div class="space-y-2">
+          <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Subject Label</label>
+          <input type="text" placeholder="e.g. Quantum Physics"
+            class="w-full bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all dark:text-white" />
         </div>
-      </section>
 
-    </main>
-  </div>
+        <div class="space-y-2">
+          <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Priority Node</label>
+          <select
+            class="w-full bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all appearance-none cursor-pointer dark:text-white">
+            <option value="">Choose Level</option>
+            <option value="High">🔥 High Priority</option>
+            <option value="Medium">⚡ Medium Priority</option>
+            <option value="Low">🧊 Low Priority</option>
+          </select>
+        </div>
 
-  <!-- Scripts -->
+        <button type="submit"
+          class="bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl px-8 py-3.5 text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-indigo-600/20 transition-all active:scale-95">
+          Save Node
+        </button>
+      </form>
+    </section>
+
+    <section class="reveal" style="animation-delay: 0.3s">
+      <div class="flex justify-between items-center mb-8 px-2">
+        <h2 class="text-2xl font-black italic tracking-tighter uppercase heading-intel">Active Modules</h2>
+        <span id="subject-count"
+          class="px-5 py-1.5 glass-card text-indigo-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-500/20">
+          0 Subjects
+        </span>
+      </div>
+
+      <div id="subject-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
+      </div>
+    </section>
+
+  </main>
+
   <script src="../src/js/loadComponents.js" defer></script>
   <script src="../src/js/sidebar.js"></script>
   <script src="../src/js/storage.js"></script>
   <script src="../src/js/subjects.js"></script>
-
 </body>
 
 </html>

@@ -1,111 +1,163 @@
-const tasks = getData("tasks");
+/**
+ * Pro Analytics Engine - Nexus v1.3
+ */
+let charts = {}; // Store instances globally
 
-// ---------- BASIC STATS ----------
-const total = tasks.length;
-const completed = tasks.filter(t => t.status === "Completed").length;
-const pending = tasks.filter(t => t.status === "Pending").length;
+document.addEventListener("DOMContentLoaded", () => {
+  renderProAnalytics();
 
-// DOM
-document.getElementById("total-tasks").innerText = total;
-document.getElementById("completed-tasks").innerText = completed;
-document.getElementById("pending-tasks").innerText = pending;
-
-// ---------- OVERALL PROGRESS ----------
-const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
-document.getElementById("progress-bar").style.width = percent + "%";
-document.getElementById("progress-text").innerText =
-  `${percent}% of tasks completed`;
-
-// ---------- TASK STATUS CHART ----------
-new Chart(document.getElementById("statusChart"), {
-  type: "doughnut",
-  data: {
-    labels: ["Completed", "Pending"],
-    datasets: [{
-      data: [completed, pending],
-      backgroundColor: ["#22c55e", "#ef4444"],
-      borderWidth: 2
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: "65%",
-    plugins: { legend: { position: "top" } }
-  }
+  // THE FIX: Listen for window resize to fix overlapping charts
+  window.addEventListener("resize", () => {
+    Object.values(charts).forEach((chart) => {
+      if (chart) chart.resize();
+    });
+  });
 });
 
-// ---------- TASK TYPE CHART ----------
-const typeCount = {};
-tasks.forEach(t => {
-  typeCount[t.type] = (typeCount[t.type] || 0) + 1;
-});
+function renderProAnalytics() {
+  const tasks = getData("tasks") || [];
+  const total = tasks.length;
+  const completed = tasks.filter(
+    (t) => t.status === "Completed" || t.status === "Done",
+  ).length;
+  const pending = total - completed;
+  const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
 
-new Chart(document.getElementById("typeChart"), {
-  type: "pie",
-  data: {
-    labels: Object.keys(typeCount),
-    datasets: [{
-      data: Object.values(typeCount),
-      backgroundColor: ["#6366f1", "#f97316", "#06b6d4"]
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { position: "top" } }
-  }
-});
+  // Stats
+  document.getElementById("total-tasks").innerText = total;
+  document.getElementById("completed-tasks").innerText = completed;
+  document.getElementById("pending-tasks").innerText = pending;
 
-// ---------- SUBJECT WORKLOAD ----------
-const subjectCount = {};
-tasks.forEach(t => {
-  subjectCount[t.subject] = (subjectCount[t.subject] || 0) + 1;
-});
+  // Progress
+  setTimeout(() => {
+    const bar = document.getElementById("progress-bar");
+    const label = document.getElementById("progress-percent-label");
+    const text = document.getElementById("progress-text");
+    if (bar) bar.style.width = percent + "%";
+    if (label) label.innerText = percent + "%";
+    if (text)
+      text.innerText = `${completed} OF ${total} SECURE NODES CONFIRMED`;
+  }, 300);
 
-new Chart(document.getElementById("subjectChart"), {
-  type: "bar",
-  data: {
-    labels: Object.keys(subjectCount),
-    datasets: [{
-      label: "Tasks",
-      data: Object.values(subjectCount),
-      backgroundColor: "#6366f1",
-      borderRadius: 8
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: { stepSize: 1 }
-      }
+  const isDark = document.documentElement.classList.contains("dark");
+  const baseColor = isDark ? "#94a3b8" : "#64748b";
+
+  Chart.defaults.font.family = "'Inter', sans-serif";
+  Chart.defaults.font.weight = "900";
+  Chart.defaults.color = baseColor;
+
+  // 1. STATUS CHART
+  charts.status = new Chart(document.getElementById("statusChart"), {
+    type: "doughnut",
+    data: {
+      labels: ["Finished", "In-Progress"],
+      datasets: [
+        {
+          data: [completed, pending],
+          backgroundColor: ["#10b981", "#6366f1"],
+          borderWidth: 0,
+        },
+      ],
     },
-    plugins: { legend: { display: false } }
-  }
-});
+    options: {
+      responsive: true,
+      maintainAspectRatio: false, // MANDATORY FOR SIDEBAR RESIZE
+      cutout: "75%",
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: { boxWidth: 10, font: { size: 10 } },
+        },
+      },
+    },
+  });
 
-// ---------- SMART INSIGHTS ----------
-const insights = document.getElementById("insights");
-insights.innerHTML = "";
+  // 2. CATEGORY CHART
+  const types = {};
+  tasks.forEach((t) => (types[t.type] = (types[t.type] || 0) + 1));
 
-if (percent < 40)
-  insights.innerHTML += `<li>⚠ Productivity is low. Try completing smaller tasks first.</li>`;
+  charts.type = new Chart(document.getElementById("typeChart"), {
+    type: "polarArea",
+    data: {
+      labels: Object.keys(types),
+      datasets: [
+        {
+          data: Object.values(types),
+          backgroundColor: [
+            "rgba(99, 102, 241, 0.7)",
+            "rgba(249, 115, 22, 0.7)",
+            "rgba(217, 70, 239, 0.7)",
+          ],
+          borderWidth: 0,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          grid: { color: "rgba(148, 163, 184, 0.1)" },
+          ticks: { display: false },
+        },
+      },
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: { boxWidth: 10, font: { size: 10 } },
+        },
+      },
+    },
+  });
 
-const pendingExams = tasks.filter(
-  t => t.type === "Exam" && t.status === "Pending"
-).length;
+  // 3. SUBJECT INTENSITY
+  const subjects = {};
+  tasks.forEach((t) => (subjects[t.subject] = (subjects[t.subject] || 0) + 1));
 
-if (pendingExams)
-  insights.innerHTML += `<li>📚 You have ${pendingExams} pending exam(s). Prioritize revision.</li>`;
+  charts.subject = new Chart(document.getElementById("subjectChart"), {
+    type: "bar",
+    data: {
+      labels: Object.keys(subjects),
+      datasets: [
+        {
+          label: "Intensity",
+          data: Object.values(subjects),
+          backgroundColor: "#6366f1",
+          borderRadius: 8,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true, grid: { color: "rgba(148, 163, 184, 0.1)" } },
+        x: { grid: { display: false } },
+      },
+      plugins: { legend: { display: false } },
+    },
+  });
 
-const maxSubject = Object.entries(subjectCount)
-  .sort((a, b) => b[1] - a[1])[0];
+  // Recommendations
+  const feed = document.getElementById("insights");
+  feed.innerHTML = "";
+  const tips = [];
+  if (percent < 50)
+    tips.push({ icon: "⚡", text: "Momentum low. Focus on secure nodes." });
+  const subNames = Object.keys(subjects);
+  if (subNames.length > 0)
+    tips.push({
+      icon: "🎯",
+      text: `High intensity detected in ${subNames[0]}.`,
+    });
 
-if (maxSubject)
-  insights.innerHTML += `<li>📌 <b>${maxSubject[0]}</b> has the highest workload (${maxSubject[1]} tasks).</li>`;
-
-if (!insights.innerHTML)
-  insights.innerHTML = `<li>🎯 Great consistency! Keep going.</li>`;
+  feed.innerHTML = tips
+    .map(
+      (t) => `
+    <li class="flex items-center gap-4 p-4 glass-card rounded-2xl border-indigo-500/10">
+        <span class="text-xl">${t.icon}</span>
+        <p class="text-[10px] font-black uppercase tracking-widest">${t.text}</p>
+    </li>`,
+    )
+    .join("");
+}

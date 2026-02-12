@@ -1,216 +1,205 @@
-// ===============================
-// DATE HELPERS (LOCAL SAFE)
-// ===============================
-function toLocalDateString(date = new Date()) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
+/**
+ * Nexus Intelligence Hub - Fully Synchronized Controller
+ * Final Update: 2026-02-13 | 02:46 AM IST
+ */
 
-function addDays(baseDate, days) {
-  const d = new Date(baseDate);
-  d.setDate(d.getDate() + days);
-  return toLocalDateString(d);
-}
+document.addEventListener("DOMContentLoaded", () => {
+  initISTClock();
+  renderIntelligenceHub();
 
-const TODAY = toLocalDateString();
-const TOMORROW = addDays(new Date(), 1);
+  // High-end reveal animation
+  document.querySelectorAll(".reveal").forEach((el, i) => {
+    el.style.animationDelay = `${(i + 1) * 0.1}s`;
+  });
+});
 
-// ===============================
-// WEEK HELPERS (FOR PROGRESS)
-// ===============================
-function getWeekRange() {
-  const today = new Date();
-  const day = today.getDay() || 7; // Sunday = 7
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - day + 1);
-
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-
-  return {
-    start: toLocalDateString(monday),
-    end: toLocalDateString(sunday)
+/**
+ * 1. HIGH-PRECISION IST CLOCK
+ * Enlarged for terminal visibility in the header
+ */
+function initISTClock() {
+  const clock = document.getElementById("ist-clock");
+  const update = () => {
+    const now = new Date();
+    const istString = now.toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+      timeZone: "Asia/Kolkata",
+    });
+    if (clock) clock.innerText = istString.toUpperCase() + " IST";
   };
+  setInterval(update, 1000);
+  update();
 }
 
-// ===============================
-// FETCH DATA
-// ===============================
-const subjects = getData("subjects");
-const tasks = getData("tasks");
-const schedule = getData("schedule");
+/**
+ * 2. MAIN INTELLIGENCE HUB
+ */
+function renderIntelligenceHub() {
+  const tasks = getData("tasks") || [];
+  const subjects = getData("subjects") || [];
+  const schedule = getData("schedule") || [];
 
-// ===============================
-// DEADLINE ALERT LOGIC
-// ===============================
-function getDeadlineAlerts(tasks) {
-  return tasks
-    .filter(t => t.status !== "Completed")
-    .map(task => {
-      let level = null;
+  // Precise date string matching for Schedule Planner (YYYY-MM-DD)
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
-      if (task.deadline < TODAY) level = "overdue";
-      else if (task.deadline === TODAY) level = "today";
-      else if (task.deadline === TOMORROW) level = "tomorrow";
+  // --- A. CALCULATIONS ---
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter(
+    (t) => t.status === "Completed" || t.status === "Done",
+  );
+  const overdueTasks = tasks.filter(
+    (t) =>
+      t.status !== "Completed" && t.status !== "Done" && t.deadline < todayStr,
+  );
+  const percent =
+    totalTasks === 0
+      ? 0
+      : Math.round((completedTasks.length / totalTasks) * 100);
 
-      if (!level) return null;
+  // --- B. CORE STAT INJECTION ---
+  const elements = {
+    subjects: document.getElementById("subject-count-dash"),
+    workload: document.getElementById("total-tasks-dash"),
+    secured: document.getElementById("completed-count-dash"),
+    active: document.getElementById("pending-count-dash"),
+    percent: document.getElementById("percent-label"),
+  };
 
-      return {
-        title: task.title,
-        subject: task.subject,
-        deadline: task.deadline,
-        level
-      };
-    })
-    .filter(Boolean)
-    .sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+  if (elements.subjects) elements.subjects.innerText = subjects.length;
+  if (elements.workload) elements.workload.innerText = totalTasks;
+  if (elements.secured) elements.secured.innerText = completedTasks.length;
+  if (elements.active)
+    elements.active.innerText = totalTasks - completedTasks.length;
+  if (elements.percent) elements.percent.innerText = `${percent}%`;
+
+  // --- C. VELOCITY RING ANIMATION ---
+  const ring = document.getElementById("progress-ring");
+  const circumference = 471; // 2 * PI * 75
+  if (ring) {
+    ring.style.strokeDashoffset =
+      circumference - (percent / 100) * circumference;
+  }
+
+  // --- D. ENHANCED SYSTEM ANALYTICS LOGIC ---
+  const insightEl = document.getElementById("momentum-insight");
+  if (insightEl) {
+    if (overdueTasks.length > 5) {
+      insightEl.innerText = `CRITICAL OVERLOAD: ${overdueTasks.length} OVERDUE`;
+      insightEl.className = "text-rose-500 animate-pulse font-black";
+    } else if (totalTasks === 0) {
+      insightEl.innerText = "STANDBY: ADD MODULES";
+      insightEl.className = "text-indigo-500 font-black";
+    } else if (percent >= 75) {
+      insightEl.innerText = "PEAK PERFORMANCE";
+      insightEl.className = "text-emerald-500 font-black";
+    } else {
+      insightEl.innerText = "SYSTEM READY: OPTIMIZING";
+      insightEl.className = "text-indigo-500 font-black";
+    }
+  }
+
+  // --- E. COMPONENT RENDERING ---
+  renderAlerts(overdueTasks);
+  renderList(schedule, todayStr, "today-schedule", "SESSIONS");
+  renderDeadlines(tasks, todayStr, "upcoming-deadlines");
 }
 
-const alerts = getDeadlineAlerts(tasks);
+/**
+ * 3. URGENT NODES RENDERER
+ * Includes "System Nominal" placeholder
+ */
+function renderAlerts(overdueTasks) {
+  const alertBox = document.getElementById("dashboard-alerts");
+  if (!alertBox) return;
 
-// ===============================
-// DOM REFERENCES
-// ===============================
-const totalSubjectsEl = document.getElementById("total-subjects");
-const todayTasksEl = document.getElementById("today-tasks");
-const completedEl = document.getElementById("completed-tasks");
-const pendingEl = document.getElementById("pending-tasks");
-
-const todayScheduleList = document.getElementById("today-schedule");
-const upcomingDeadlinesList = document.getElementById("upcoming-deadlines");
-const alertBox = document.getElementById("dashboard-alerts");
-
-const weeklyProgressText = document.getElementById("weekly-progress-text");
-const weeklyProgressBar = document.getElementById("weekly-progress-bar");
-
-// ===============================
-// DASHBOARD STATS
-// ===============================
-const todaysTasks = tasks.filter(
-  t => t.deadline === TODAY && t.status === "Pending"
-);
-
-const completedTasks = tasks.filter(t => t.status === "Completed");
-const pendingTasks = tasks.filter(t => t.status === "Pending");
-
-totalSubjectsEl.innerText = subjects.length;
-todayTasksEl.innerText = todaysTasks.length;
-completedEl.innerText = completedTasks.length;
-pendingEl.innerText = pendingTasks.length;
-
-// ===============================
-// TODAY'S STUDY SCHEDULE
-// ===============================
-todayScheduleList.innerHTML = "";
-
-const todaysSessions = schedule.filter(s => s.date === TODAY);
-
-if (todaysSessions.length === 0) {
-  todayScheduleList.innerHTML = `
-    <li class="text-gray-500 dark:text-gray-400">
-      No study sessions planned for today
-    </li>
-  `;
-} else {
-  todaysSessions.forEach(s => {
-    todayScheduleList.innerHTML += `
-      <li class="flex justify-between items-center bg-gray-50 dark:bg-gray-700 px-4 py-2 rounded">
-        <span class="font-medium">${s.subject}</span>
-        <span class="text-xs text-gray-500 dark:text-gray-400">
-          ${s.start} – ${s.end}
-        </span>
-      </li>
-    `;
-  });
+  if (overdueTasks.length > 0) {
+    alertBox.innerHTML = overdueTasks
+      .slice(0, 3)
+      .map(
+        (a) => `
+            <div class="flex items-center justify-between p-4 rounded-2xl bg-rose-500/10 border border-rose-500/10 group hover:bg-rose-500/20 transition-all">
+                <span class="text-[10px] font-black text-rose-500 uppercase tracking-wide truncate pr-4">${a.title}</span>
+                <span class="text-[8px] font-black bg-rose-600 text-white px-2 py-1 rounded-full uppercase tracking-tighter">LATE</span>
+            </div>`,
+      )
+      .join("");
+  } else {
+    alertBox.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-10 opacity-40">
+                <div class="w-12 h-12 mb-3 bg-slate-500/10 rounded-full flex items-center justify-center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-slate-500">
+                        <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                </div>
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">System Nominal</p>
+                <p class="text-[8px] font-bold uppercase text-slate-400 mt-1">No critical nodes detected</p>
+            </div>`;
+  }
 }
 
-// ===============================
-// UPCOMING DEADLINES (NON-URGENT)
-// ===============================
-upcomingDeadlinesList.innerHTML = "";
+/**
+ * 4. TODAY'S SESSIONS LIST
+ */
+function renderList(schedule, todayStr, elementId, type) {
+  const sessionList = document.getElementById(elementId);
+  const todaysSessions = schedule.filter((s) => s.date === todayStr);
 
-const upcoming = pendingTasks
-  .filter(t => t.deadline > TODAY)
-  .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
-  .slice(0, 3);
-
-if (upcoming.length === 0) {
-  upcomingDeadlinesList.innerHTML = `
-    <li class="text-sm text-gray-500 dark:text-gray-400">
-      🎉 No upcoming deadlines
-    </li>
-  `;
-} else {
-  upcoming.forEach(t => {
-    upcomingDeadlinesList.innerHTML += `
-      <li class="flex justify-between items-center bg-gray-50 dark:bg-gray-700 px-4 py-2 rounded">
-        <span class="font-medium">${t.title}</span>
-        <span class="text-xs text-red-400">${t.deadline}</span>
-      </li>
-    `;
-  });
+  if (sessionList) {
+    sessionList.innerHTML = todaysSessions.length
+      ? todaysSessions
+          .map(
+            (s) => `
+            <li class="p-5 rounded-2xl bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 flex justify-between items-center group">
+                <div class="flex items-center gap-5">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-black text-lg uppercase">${s.subject.charAt(0)}</div>
+                    <div>
+                        <p class="font-black text-md text-slate-800 dark:text-white uppercase">${s.subject}</p>
+                        <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">${s.start} — ${s.end}</p>
+                    </div>
+                </div>
+                <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 shadow-[0_0_8px_#6366f1] animate-pulse"></div>
+            </li>`,
+          )
+          .join("")
+      : `<div class="py-8 text-center opacity-30 text-xs font-black uppercase tracking-widest italic">No active ${type} for today</div>`;
+  }
 }
 
-// ===============================
-// URGENT ALERTS
-// ===============================
-alertBox.innerHTML = "";
+/**
+ * 5. UPCOMING DEADLINES LIST
+ */
+function renderDeadlines(tasks, todayStr, elementId) {
+  const deadlineList = document.getElementById(elementId);
+  const approaching = tasks
+    .filter(
+      (t) =>
+        t.status !== "Completed" &&
+        t.status !== "Done" &&
+        t.deadline >= todayStr,
+    )
+    .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
+    .slice(0, 3);
 
-if (alerts.length === 0) {
-  alertBox.innerHTML = `
-    <div class="bg-gray-800 p-4 rounded-xl text-gray-400">
-      🎉 No urgent deadlines
-    </div>
-  `;
-} else {
-  alertBox.innerHTML = alerts.slice(0, 3).map(a => `
-    <div class="flex justify-between items-center p-4 rounded-xl bg-gray-800">
-      <div>
-        <p class="font-medium">${a.title}</p>
-        <p class="text-xs text-gray-400">${a.subject}</p>
-      </div>
-      <span class="text-xs px-2 py-1 rounded ${
-        a.level === "overdue"
-          ? "bg-red-600 text-white"
-          : a.level === "today"
-          ? "bg-orange-500 text-white"
-          : "bg-yellow-400 text-black"
-      }">
-        ${
-          a.level === "overdue"
-            ? "Overdue"
-            : a.level === "today"
-            ? "Due Today"
-            : "Due Tomorrow"
-        }
-      </span>
-    </div>
-  `).join("");
-}
-
-// ===============================
-// WEEKLY PROGRESS (REAL LOGIC)
-// ===============================
-const week = getWeekRange();
-
-const weeklyTasks = tasks.filter(
-  t => t.deadline >= week.start && t.deadline <= week.end
-);
-
-const weeklyCompleted = weeklyTasks.filter(
-  t => t.status === "Completed"
-);
-
-const weeklyTotal = weeklyTasks.length;
-const weeklyDone = weeklyCompleted.length;
-
-const progressPercent = weeklyTotal === 0
-  ? 0
-  : Math.round((weeklyDone / weeklyTotal) * 100);
-
-if (weeklyProgressText && weeklyProgressBar) {
-  weeklyProgressText.innerText = `${weeklyDone} / ${weeklyTotal} tasks`;
-  weeklyProgressBar.style.width = `${progressPercent}%`;
+  if (deadlineList) {
+    deadlineList.innerHTML = approaching.length
+      ? approaching
+          .map(
+            (t) => `
+            <li class="flex justify-between items-center p-5 rounded-2xl bg-gray-50 dark:bg-slate-800/40 border border-black/5 dark:border-white/5">
+                <div class="flex flex-col">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">${t.subject}</span>
+                    <span class="text-sm font-black text-slate-800 dark:text-white uppercase">${t.title}</span>
+                </div>
+                <span class="text-[9px] font-black text-fuchsia-500 bg-fuchsia-500/10 px-3 py-1.5 rounded-lg border border-fuchsia-500/20">
+                    ${t.deadline === todayStr ? "TODAY" : t.deadline}
+                </span>
+            </li>`,
+          )
+          .join("")
+      : `<div class="py-8 text-center opacity-30 text-xs font-black uppercase tracking-widest italic">No upcoming deadlines detected</div>`;
+  }
 }

@@ -4,104 +4,234 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Schedule Planner – Smart Study Planner</title>
+  <title>Nexus | Pro Timetable</title>
   <link rel="stylesheet" href="../src/output.css">
+  <style>
+    :root {
+      --accent: #6366f1;
+    }
+
+    @keyframes reveal {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+        filter: blur(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    .reveal {
+      animation: reveal 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      opacity: 0;
+    }
+
+    body {
+      transition: background-color 0.3s ease;
+      overflow: hidden;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .dark .glass-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* --- Dynamic Grid Structure --- */
+    .grid-header-row,
+    .dynamic-row {
+      display: grid;
+      /* Time col is smaller on mobile, larger on desktop */
+      grid-template-columns: 60px repeat(7, 1fr);
+      width: 100%;
+      min-width: 700px;
+      /* Ensures columns don't crush on mobile */
+    }
+
+    @media (min-width: 768px) {
+
+      .grid-header-row,
+      .dynamic-row {
+        grid-template-columns: 80px repeat(7, 1fr);
+      }
+    }
+
+    .time-cell,
+    .time-header {
+      background: rgba(99, 102, 241, 0.05);
+      font-weight: 800;
+      font-size: 10px;
+      color: #6366f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+    }
+
+    .day-label {
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 10px;
+      color: #4b5563;
+    }
+
+    .dark .day-label {
+      color: #f3f4f6;
+    }
+
+    .grid-slot {
+      padding: 4px;
+      border-right: 1px dotted rgba(0, 0, 0, 0.1);
+      min-width: 0;
+      display: flex;
+    }
+
+    .dark .grid-slot {
+      border-right: 1px dotted rgba(255, 255, 255, 0.1);
+    }
+
+    .subject-timetable-card {
+      width: 100%;
+      background: white;
+      border-radius: 8px;
+      padding: 6px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .dark .subject-timetable-card {
+      background: #1e293b;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .subject-name {
+      font-size: 9px;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .subject-time {
+      font-size: 8px;
+      font-weight: 700;
+      margin-top: 2px;
+      opacity: 0.7;
+    }
+
+    /* Custom scrollbar for horizontal matrix */
+    .matrix-wrapper::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .matrix-wrapper::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 10px;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    #main-content {
+      margin-left: var(--sidebar-width);
+    }
+  </style>
 </head>
 
-<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
-
+<body
+  class="bg-gray-50 text-slate-900 dark:bg-[#020617] dark:text-slate-200 min-h-screen flex h-screen overflow-hidden">
   <script src="../src/js/theme.js"></script>
+  <div id="sidebar"></div>
 
-  <div class="flex h-screen overflow-hidden">
+  <main id="main-content"
+    class="flex-1 ml-[280px] body.sidebar-collapsed:ml-[88px] px-4 md:px-10 pt-4 pb-10 space-y-6 overflow-y-auto transition-all duration-300">
+    <header class="mb-8 reveal" style="animation-delay: 0.1s">
+      <h1 class="text-4xl md:text-4xl font-black tracking-tight uppercase italic  leading-tight">Schedule Planner</h1>
+      <p class="text-slate-500 dark:text-slate-400 text-xs md:text-sm font-medium">Map your week with a cinematic
+        time-grid.</p>
+    </header>
 
-    <!-- Sidebar -->
-    <div id="sidebar"></div>
-
-    <!-- Main -->
-    <main id="main-content" class="flex-1 p-6 overflow-y-auto transition-all duration-300">
-
-      <!-- Header -->
-      <header class="mb-8">
-        <h1 class="text-2xl font-semibold">Schedule Planner</h1>
-        <p class="text-gray-600 dark:text-gray-400">
-          Organize your daily study sessions using time blocks
-        </p>
-      </header>
-
-      <!-- Add Session -->
-      <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow mb-8">
-        <h2 class="text-lg font-semibold mb-4">Add Study Session</h2>
-
-        <form class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-
-          <div>
-            <label class="block text-sm mb-1 text-gray-600 dark:text-gray-400">
-              Subject
-            </label>
-            <select id="subject-select"
-              class="w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-800">
-              <option value="">Select Subject</option>
-            </select>
-
-          </div>
-          <div>
-            <label class="block text-sm mb-1 text-gray-600 dark:text-gray-400">
-              Date
-            </label>
-            <input type="date" id="schedule-date"
-              class="w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-          </div>
-
-          <div>
-            <label class="block text-sm mb-1 text-gray-600 dark:text-gray-400">
-              Start Time
-            </label>
-            <input type="time"
-              class="w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 " />
-          </div>
-
-          <div>
-            <label class="block text-sm mb-1 text-gray-600 dark:text-gray-400">
-              End Time
-            </label>
-            <input type="time"
-              class="w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-          </div>
-
-          <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-xl hover:bg-indigo-700 transition">
-            Add Session
-          </button>
-
-        </form>
-        <p id="time-error" class="mt-3 text-sm text-red-500 hidden">
-          End time must be later than start time.
-        </p>
-
-      </section>
-
-      <!-- Today Plan -->
-      <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-        <h2 class="text-lg font-semibold mb-4">Today’s Study Plan</h2>
-        <ul id="schedule-list" class="space-y-4"></ul>
-      </section>
-      <!-- Weekly Schedule -->
-      <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow mt-8">
-        <h2 class="text-lg font-semibold mb-4">Weekly Schedule</h2>
-
-        <div id="weekly-schedule" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4">
+    <section class="glass-card p-5 md:p-8 rounded-3xl mb-10 reveal" style="animation-delay: 0.2s">
+      <h2 class="text-base md:text-lg font-bold mb-6 flex items-center gap-2 italic">
+        <span class="w-1.5 h-5 bg-indigo-500 rounded-full"></span> Add Study Session
+      </h2>
+      <form class="flex flex-col gap-4 lg:flex-row lg:items-end">
+        <div class="flex-1 space-y-1">
+          <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Subject</label>
+          <select id="subject-select"
+            class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none cursor-pointer"></select>
         </div>
-      </section>
+        <div class="flex-1 space-y-1">
+          <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Target Day</label>
+          <select id="day-select"
+            class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm outline-none cursor-pointer">
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3 lg:flex lg:gap-4">
+          <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Start</label>
+            <input type="time"
+              class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm outline-none" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1">End</label>
+            <input type="time"
+              class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm outline-none" />
+          </div>
+        </div>
+        <button type="submit"
+          class="w-full lg:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-xl px-8 py-3 text-xs uppercase shadow-lg shadow-indigo-500/20 transition-all active:scale-95">Book
+          Block</button>
+      </form>
+      <p id="time-error" class="mt-4 text-[10px] font-black text-rose-500 hidden uppercase">⚠ End time must be later
+        than start time.</p>
+    </section>
 
+    <section class="reveal" style="animation-delay: 0.3s">
+      <h2 class="text-lg md:text-xl font-black italic uppercase mb-4 px-1">Weekly Matrix</h2>
+      <div class="matrix-wrapper overflow-x-auto rounded-[2rem] border border-black/5 dark:border-white/5 shadow-2xl">
+        <div class="min-w-[700px] md:min-w-[800px]">
+          <div id="grid-header" class="grid-header-row bg-gray-50 dark:bg-gray-900/50"></div>
+          <div id="dynamic-grid-body" class="flex flex-col bg-white dark:bg-[#0f172a]"></div>
+        </div>
+      </div>
+      <p class="text-[9px] text-slate-400 mt-3 px-2 lg:hidden">← Swipe to see full week →</p>
+    </section>
 
-    </main>
-  </div>
+    <section class="mt-12 pb-20 reveal" style="animation-delay: 0.4s">
+      <h2 id="focus-day-title"
+        class="text-lg md:text-xl font-black italic uppercase mb-6 opacity-50 tracking-widest uppercase">Focus: Today
+      </h2>
+      <ul id="schedule-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></ul>
+    </section>
+  </main>
 
-  <!-- Scripts -->
   <script src="../src/js/loadComponents.js" defer></script>
   <script src="../src/js/sidebar.js"></script>
   <script src="../src/js/storage.js"></script>
   <script src="../src/js/schedule.js"></script>
-
 </body>
 
 </html>
