@@ -31,9 +31,20 @@
         }
 
         body {
-            background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.05), transparent 40%), #020617;
-            transition: background-color 0.3s ease;
+            background:
+                radial-gradient(circle at top left, rgba(99, 102, 241, 0.05), transparent 40%),
+                #f8fafc;
+            /* light background */
+            transition: background-color 0.3s ease, background 0.3s ease;
         }
+
+        .dark body {
+            background:
+                radial-gradient(circle at top left, rgba(99, 102, 241, 0.05), transparent 40%),
+                #020617;
+            /* dark background */
+        }
+
 
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
@@ -135,7 +146,7 @@
     <div id="sidebar"></div>
 
     <main id="main-content"
-        class="flex-1 ml-[280px] body.sidebar-collapsed:ml-[88px] px-4 md:px-10 pt-4 pb-10 space-y-6 overflow-y-auto transition-all duration-300">
+        class="flex-1 ml-[280px] body.sidebar-collapsed:ml-[88px] px-4 md:px-10 pt-4 pb-10 space-y-6  overflow-y-auto transition-all duration-300">
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 reveal"
             style="animation-delay: 0.1s">
             <div>

@@ -1,21 +1,44 @@
 /**
  * Nexus Intelligence Hub - Fully Synchronized Controller
- * Final Update: 2026-02-13 | 02:46 AM IST
+ * Feature: Adaptive Time-Period Titles (Scholar/Strategist/Genius)
+ * Final Update: 2026-02-13 | 04:20 AM IST
  */
 
 document.addEventListener("DOMContentLoaded", () => {
   initISTClock();
   renderIntelligenceHub();
 
-  // High-end reveal animation
+  // Preserve high-end reveal animation
   document.querySelectorAll(".reveal").forEach((el, i) => {
     el.style.animationDelay = `${(i + 1) * 0.1}s`;
   });
 });
 
 /**
- * 1. HIGH-PRECISION IST CLOCK
- * Enlarged for terminal visibility in the header
+ * 1. ADAPTIVE GREETING LOGIC
+ * Rotates titles based on IST hour for academic variety
+ */
+function getGreeting() {
+  const hour = new Date().getHours();
+  let greet = "";
+  let title = "";
+
+  if (hour < 12) {
+    greet = "Good Morning";
+    title = "Scholar"; // Focus title for morning
+  } else if (hour < 17) {
+    greet = "Good Afternoon";
+    title = "Strategist"; // Management title for afternoon
+  } else {
+    greet = "Good Evening";
+    title = "Genius"; // Mastery title for evening
+  }
+
+  return `${greet}, <span class="text-indigo-600 dark:text-indigo-400">${title}</span>`;
+}
+
+/**
+ * 2. HIGH-PRECISION IST CLOCK
  */
 function initISTClock() {
   const clock = document.getElementById("ist-clock");
@@ -35,18 +58,21 @@ function initISTClock() {
 }
 
 /**
- * 2. MAIN INTELLIGENCE HUB
+ * 3. MAIN INTELLIGENCE HUB
  */
 function renderIntelligenceHub() {
   const tasks = getData("tasks") || [];
   const subjects = getData("subjects") || [];
   const schedule = getData("schedule") || [];
 
-  // Precise date string matching for Schedule Planner (YYYY-MM-DD)
+  // --- A. ADAPTIVE GREETING INJECTION ---
+  const greetingEl = document.getElementById("greeting-text");
+  if (greetingEl) greetingEl.innerHTML = getGreeting();
+
   const now = new Date();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
-  // --- A. CALCULATIONS ---
+  // --- B. CALCULATIONS ---
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter(
     (t) => t.status === "Completed" || t.status === "Done",
@@ -60,7 +86,7 @@ function renderIntelligenceHub() {
       ? 0
       : Math.round((completedTasks.length / totalTasks) * 100);
 
-  // --- B. CORE STAT INJECTION ---
+  // --- C. CORE STAT INJECTION ---
   const elements = {
     subjects: document.getElementById("subject-count-dash"),
     workload: document.getElementById("total-tasks-dash"),
@@ -76,15 +102,15 @@ function renderIntelligenceHub() {
     elements.active.innerText = totalTasks - completedTasks.length;
   if (elements.percent) elements.percent.innerText = `${percent}%`;
 
-  // --- C. VELOCITY RING ANIMATION ---
+  // --- D. VELOCITY RING ANIMATION ---
   const ring = document.getElementById("progress-ring");
-  const circumference = 471; // 2 * PI * 75
+  const circumference = 471;
   if (ring) {
     ring.style.strokeDashoffset =
       circumference - (percent / 100) * circumference;
   }
 
-  // --- D. ENHANCED SYSTEM ANALYTICS LOGIC ---
+  // --- E. SYSTEM ANALYTICS LOGIC ---
   const insightEl = document.getElementById("momentum-insight");
   if (insightEl) {
     if (overdueTasks.length > 5) {
@@ -102,15 +128,14 @@ function renderIntelligenceHub() {
     }
   }
 
-  // --- E. COMPONENT RENDERING ---
+  // --- F. COMPONENT RENDERING ---
   renderAlerts(overdueTasks);
   renderList(schedule, todayStr, "today-schedule", "SESSIONS");
   renderDeadlines(tasks, todayStr, "upcoming-deadlines");
 }
 
 /**
- * 3. URGENT NODES RENDERER
- * Includes "System Nominal" placeholder
+ * 4. COMPONENT RENDERERS
  */
 function renderAlerts(overdueTasks) {
   const alertBox = document.getElementById("dashboard-alerts");
@@ -136,14 +161,10 @@ function renderAlerts(overdueTasks) {
                     </svg>
                 </div>
                 <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">System Nominal</p>
-                <p class="text-[8px] font-bold uppercase text-slate-400 mt-1">No critical nodes detected</p>
             </div>`;
   }
 }
 
-/**
- * 4. TODAY'S SESSIONS LIST
- */
 function renderList(schedule, todayStr, elementId, type) {
   const sessionList = document.getElementById(elementId);
   const todaysSessions = schedule.filter((s) => s.date === todayStr);
@@ -165,13 +186,10 @@ function renderList(schedule, todayStr, elementId, type) {
             </li>`,
           )
           .join("")
-      : `<div class="py-8 text-center opacity-30 text-xs font-black uppercase tracking-widest italic">No active ${type} for today</div>`;
+      : `<div class="py-8 text-center opacity-30 text-xs font-black uppercase tracking-widest italic">No active ${type} today</div>`;
   }
 }
 
-/**
- * 5. UPCOMING DEADLINES LIST
- */
 function renderDeadlines(tasks, todayStr, elementId) {
   const deadlineList = document.getElementById(elementId);
   const approaching = tasks
@@ -200,6 +218,6 @@ function renderDeadlines(tasks, todayStr, elementId) {
             </li>`,
           )
           .join("")
-      : `<div class="py-8 text-center opacity-30 text-xs font-black uppercase tracking-widest italic">No upcoming deadlines detected</div>`;
+      : `<div class="py-8 text-center opacity-30 text-xs font-black uppercase tracking-widest italic">No upcoming deadlines</div>`;
   }
 }
